@@ -51,7 +51,7 @@ def add_new_last_layer(base_model, nb_classes):
   x = GlobalAveragePooling2D()(x)
   x = Dense(FC_SIZE, activation='relu')(x) #new FC layer, random init
   predictions = Dense(nb_classes, activation='softmax')(x) #new softmax layer
-  model = Model(input=base_model.input, output=predictions)
+  model = Model(inputs=base_model.input, outputs=predictions)
   return model
 
 
@@ -111,7 +111,8 @@ def train(args):
   )
 
   # setup model
-  base_model = InceptionV3(weights='imagenet', include_top=False) #include_top=False excludes final FC layer
+  base_model = InceptionV3(weights='imagenet', include_top=False) 
+  #include_top=False excludes final FC layer
   model = add_new_last_layer(base_model, nb_classes)
 
   # transfer learning
@@ -119,10 +120,10 @@ def train(args):
 
   history_tl = model.fit_generator(
     train_generator,
-    nb_epoch=nb_epoch,
-    samples_per_epoch=nb_train_samples,
+    epochs=nb_epoch,
+    steps_per_epoch=int(nb_train_samples/batch_size),
     validation_data=validation_generator,
-    nb_val_samples=nb_val_samples,
+    validation_steps=int(nb_val_samples/batch_size),
     class_weight='auto')
 
   # fine-tuning
@@ -130,10 +131,10 @@ def train(args):
 
   history_ft = model.fit_generator(
     train_generator,
-    samples_per_epoch=nb_train_samples,
-    nb_epoch=nb_epoch,
+    epochs=nb_epoch,
+    steps_per_epoch=int(nb_train_samples/batch_size),
     validation_data=validation_generator,
-    nb_val_samples=nb_val_samples,
+    validation_steps=int(nb_val_samples/batch_size),
     class_weight='auto')
 
   model.save(args.output_model_file)
