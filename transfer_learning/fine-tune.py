@@ -74,7 +74,7 @@ def train(args):
   """Use transfer learning and fine-tuning to train a network on a new dataset"""
   nb_train_samples = get_nb_files(args.train_dir)
   nb_classes = len(glob.glob(args.train_dir + "/*"))
-  nb_val_samples = get_nb_files(args.val_dir)
+#  nb_val_samples = get_nb_files(args.val_dir)
   nb_epoch = int(args.nb_epoch)
   batch_size = int(args.batch_size)
 
@@ -104,11 +104,11 @@ def train(args):
     batch_size=batch_size,
   )
 
-  validation_generator = test_datagen.flow_from_directory(
-    args.val_dir,
-    target_size=(IM_WIDTH, IM_HEIGHT),
-    batch_size=batch_size,
-  )
+#  validation_generator = test_datagen.flow_from_directory(
+#    args.val_dir,
+#    target_size=(IM_WIDTH, IM_HEIGHT),
+#    batch_size=batch_size,
+#  )
 
   # setup model
   base_model = InceptionV3(weights='imagenet', include_top=False) 
@@ -122,8 +122,8 @@ def train(args):
     train_generator,
     epochs=nb_epoch,
     steps_per_epoch=int(nb_train_samples/batch_size),
-    validation_data=validation_generator,
-    validation_steps=int(nb_val_samples/batch_size),
+#    validation_data=validation_generator,
+#    validation_steps=int(nb_val_samples/batch_size),
     class_weight='auto')
 
   # fine-tuning
@@ -133,8 +133,8 @@ def train(args):
     train_generator,
     epochs=nb_epoch,
     steps_per_epoch=int(nb_train_samples/batch_size),
-    validation_data=validation_generator,
-    validation_steps=int(nb_val_samples/batch_size),
+#    validation_data=validation_generator,
+#    validation_steps=int(nb_val_samples/batch_size),
     class_weight='auto')
 
   model.save(args.output_model_file)
@@ -145,18 +145,18 @@ def train(args):
 
 def plot_training(history):
   acc = history.history['acc']
-  val_acc = history.history['val_acc']
+#  val_acc = history.history['val_acc']
   loss = history.history['loss']
-  val_loss = history.history['val_loss']
+#  val_loss = history.history['val_loss']
   epochs = range(len(acc))
 
   plt.plot(epochs, acc, 'r.')
-  plt.plot(epochs, val_acc, 'r')
+#  plt.plot(epochs, val_acc, 'r')
   plt.title('Training and validation accuracy')
 
   plt.figure()
   plt.plot(epochs, loss, 'r.')
-  plt.plot(epochs, val_loss, 'r-')
+#  plt.plot(epochs, val_loss, 'r-')
   plt.title('Training and validation loss')
   plt.show()
 
@@ -164,7 +164,7 @@ def plot_training(history):
 if __name__=="__main__":
   a = argparse.ArgumentParser()
   a.add_argument("--train_dir")
-  a.add_argument("--val_dir")
+#  a.add_argument("--val_dir")
   a.add_argument("--nb_epoch", default=NB_EPOCHS)
   a.add_argument("--batch_size", default=BAT_SIZE)
   a.add_argument("--output_model_file", default="inceptionv3-ft.model")
