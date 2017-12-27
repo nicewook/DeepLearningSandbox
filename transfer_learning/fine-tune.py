@@ -103,16 +103,15 @@ def train(args):
     target_size=(IM_WIDTH, IM_HEIGHT),
     batch_size=batch_size,
   )
-
-#  validation_generator = test_datagen.flow_from_directory(
-#    args.val_dir,
-#    target_size=(IM_WIDTH, IM_HEIGHT),
-#    batch_size=batch_size,
-#  )
+  #validation_generator = test_datagen.flow_from_directory(
+   # args.val_dir,
+   # target_size=(IM_WIDTH, IM_HEIGHT),
+   # batch_size=batch_size,
+  #)
 
   # setup model
-  base_model = InceptionV3(weights='imagenet', include_top=False) 
-  #include_top=False excludes final FC layer
+
+  base_model = InceptionV3(weights='imagenet', include_top=False) #include_top=False excludes final FC layer
   model = add_new_last_layer(base_model, nb_classes)
 
   # transfer learning
@@ -122,8 +121,8 @@ def train(args):
     train_generator,
     epochs=nb_epoch,
     steps_per_epoch=int(nb_train_samples/batch_size),
-#    validation_data=validation_generator,
-#    validation_steps=int(nb_val_samples/batch_size),
+    #validation_data=validation_generator,
+    #validation_steps=int(nb_val_samples/batch_size),
     class_weight='auto')
 
   # fine-tuning
@@ -171,11 +170,11 @@ if __name__=="__main__":
   a.add_argument("--plot", action="store_true")
 
   args = a.parse_args()
-  if args.train_dir is None or args.val_dir is None:
+  if args.train_dir is None: # or args.val_dir is None:
     a.print_help()
     sys.exit(1)
 
-  if (not os.path.exists(args.train_dir)) or (not os.path.exists(args.val_dir)):
+  if (not os.path.exists(args.train_dir)):  # or (not os.path.exists(args.val_dir)):
     print("directories do not exist")
     sys.exit(1)
 
